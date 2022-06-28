@@ -2,7 +2,6 @@ import scrapy
 
 from zrzut.utils import SORT_OPTIONS, NUMBERS_PATTERN
 from zrzut.items import Zrzuta
-from zrzut.itemloaders import ZrzutaLoader
 
 PAGE_SUFFIX = "&page={}"
 
@@ -44,6 +43,10 @@ class ZrzutSearchSpider(scrapy.Spider):
             z['url'] = z['url'].strip()
             if z['url'] == '#': continue
             z['id'] = (div.css('a::attr(data-id)').get())
+            try:
+                z['title'] = div.css('h5::text').get().strip()
+            except AttributeError:
+                z['title'] = "NA"
             zebrano = div.css('span[class="h5 mb-2"]::text').get()
             if zebrano is None:
                 zebrano = div.css('div[class="h5 m-0"]::text').get()
@@ -53,14 +56,11 @@ class ZrzutSearchSpider(scrapy.Spider):
                 z['zebrano'] = zebrano.strip()
             except AttributeError:
                 z['zebrano'] = "NA"
-            try:
-                z['title'] = div.css('h5::text').get().strip()
-            except AttributeError:
-                z['title'] = "NA"
+           
             z['img_url'] = div.css('img::attr(src)').get()
             if z['img_url'] is None: z['img_url'] = "NA"
             
-            yield ZrzutaLoader(item = z, selector = div).load_item()
+            yield z
         
         if self.max_pages < 0:
             # synchronous
