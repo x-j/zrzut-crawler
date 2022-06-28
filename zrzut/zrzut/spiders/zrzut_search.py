@@ -1,10 +1,9 @@
-import re
 import scrapy
 
-from zrzut.utils import SORT_OPTIONS
+from zrzut.utils import SORT_OPTIONS, NUMBERS_PATTERN
 from zrzut.items import Zrzuta
+from zrzut.itemloaders import ZrzutaLoader
 
-NUMBERS_PATTERN = re.compile(r"\d+")
 PAGE_SUFFIX = "&page={}"
 
 class ZrzutSearchSpider(scrapy.Spider):
@@ -29,6 +28,7 @@ class ZrzutSearchSpider(scrapy.Spider):
 
     def start_requests(self):
         if self.max_pages < 0:
+            url = self.base_url + PAGE_SUFFIX.format(self.start_page)
             yield scrapy.Request(url, self.parse)
         else: 
             lim = self.max_pages + self.start_page
@@ -59,7 +59,8 @@ class ZrzutSearchSpider(scrapy.Spider):
                 z['title'] = "NA"
             z['img_url'] = div.css('img::attr(src)').get()
             if z['img_url'] is None: z['img_url'] = "NA"
-            yield z
+            
+            yield ZrzutaLoader(item = z, selector = div).load_item()
         
         if self.max_pages < 0:
             # synchronous
