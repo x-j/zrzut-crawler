@@ -1,0 +1,24 @@
+{
+    "$id": "./zrzuta_schema.json",
+    "$schema": "http://json-schema.org/draft-07/schema",
+    "required": [
+        "url", "title"
+    ],
+    "title": "Schema of a Zrzuta.",
+    "type": "object",
+    "properties": {
+        "url": {
+            "$id": "properties/url",
+            "type": "string"
+        },
+        "img_url": {
+            "type": "string"
+        },
+        "zebrano": {
+            "type": "integer"
+        },
+        "title":{
+            "type":"string"
+        }
+    }
+}
