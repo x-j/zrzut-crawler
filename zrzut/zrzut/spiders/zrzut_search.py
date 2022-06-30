@@ -8,9 +8,21 @@ PAGE_SUFFIX = "&page={}"
 class ZrzutSearchSpider(scrapy.Spider):
     name = 'zrzut_search'
     allowed_domains = ['zrzutka.pl']
-    base_url = 'https://zrzutka.pl/katalog/list?types[0]=all'
+    # INTERESTING: zrzutka changed this url on 29th June
+    # base_url = 'https://zrzutka.pl/katalog/list?types[0]=all'
+    base_url = 'https://zrzutka.pl/catalog/list?types[0]=all'
     
-    def __init__(self, sort=None, start_page = '0', max_pages=None, name=None, **kwargs) -> None:
+    def __init__(self, sort=None, start_page = '0', max_pages=-1, name=None, **kwargs) -> None:
+        """
+
+        Args:
+            sort (str, optional): sort mode. Defaults to None, which returns the same results as `popular`, the default sort for zrzutka.
+            start_page (str, optional): Start page. Defaults to '0'.
+            max_pages (int, optional): How many pages should be scraped at most. Defaults to -1, which never stops, but is not asynchronous.
+
+        Raises:
+            KeyError: on invalid query arguments.
+        """
         super().__init__(name, **kwargs)
         self.qs = ['']
         # args:
@@ -18,10 +30,8 @@ class ZrzutSearchSpider(scrapy.Spider):
             if sort not in SORT_OPTIONS:
                 raise KeyError(f"argument `sort` must be one of {SORT_OPTIONS}")
             self.qs.append(f"sort={sort}")
-        if max_pages is not None:
+        if max_pages != -1:
             self.max_pages = int(max_pages)
-        else:
-            self.max_pages = -1
         self.start_page = int(start_page)
         self.base_url = self.base_url + '&'.join(self.qs) 
 
@@ -56,6 +66,8 @@ class ZrzutSearchSpider(scrapy.Spider):
                 z['zebrano'] = zebrano.strip()
             except AttributeError:
                 z['zebrano'] = "NA"
+            
+            # TODO: parse cel
            
             z['img_url'] = div.css('img::attr(src)').get()
             if z['img_url'] is None: z['img_url'] = "NA"

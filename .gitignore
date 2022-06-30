@@ -1,5 +1,14 @@
 bin
 lib
+dbs
+logs
+eggs
+
+zrzut/project.egg-info
+
+*.jl
+
+.DS_Store
 .Python
 pyvenv.cfg
-*.jl
+twistd.pid
