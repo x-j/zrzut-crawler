@@ -6,7 +6,8 @@ eggs
 
 zrzut/project.egg-info
 
-*.jl
+zrzut/out
+zrzut/*.jl
 
 .DS_Store
 .Python

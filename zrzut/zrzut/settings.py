@@ -12,6 +12,8 @@ BOT_NAME = 'zrzut'
 SPIDER_MODULES = ['zrzut.spiders']
 NEWSPIDER_MODULE = 'zrzut.spiders'
 
+IMAGES_STORE = './out/imgs'
+MEDIA_ALLOW_REDIRECTS = True
 
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
 #USER_AGENT = 'zrzut (+http://www.yourdomain.com)'
@@ -25,7 +27,7 @@ ROBOTSTXT_OBEY = False
 # Configure a delay for requests for the same website (default: 0)
 # See https://docs.scrapy.org/en/latest/topics/settings.html#download-delay
 # See also autothrottle settings and docs
-DOWNLOAD_DELAY = 1
+DOWNLOAD_DELAY = 0.5
 # The download delay setting will honor only one of:
 #CONCURRENT_REQUESTS_PER_DOMAIN = 16
 #CONCURRENT_REQUESTS_PER_IP = 16
@@ -63,7 +65,9 @@ DOWNLOAD_DELAY = 1
 # Configure item pipelines
 # See https://docs.scrapy.org/en/latest/topics/item-pipeline.html
 ITEM_PIPELINES = {
-   'zrzut.pipelines.DuplicatesPipeline': 200,
+   'zrzut.pipelines.DuplicatesPipeline': 1,
+   'zrzut.pipelines.ZrzutImagesPipeline': 200,
+   # 'scrapy.pipelines.images.ImagesPipeline': 250,
    'zrzut.pipelines.ZrzutPipeline': 300
 }
 

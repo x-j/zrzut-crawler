@@ -1,4 +1,5 @@
 import scrapy
+from scrapy.exceptions import UsageError
 
 from zrzut.utils import SORT_OPTIONS, NUMBERS_PATTERN
 from zrzut.items import Zrzuta
@@ -12,6 +13,10 @@ class ZrzutSearchSpider(scrapy.Spider):
     # base_url = 'https://zrzutka.pl/katalog/list?types[0]=all'
     base_url = 'https://zrzutka.pl/catalog/list?types[0]=all'
     
+    custom_settings = {
+        'IMAGES_URLS_FIELD' : 'img_url'
+    }
+
     def __init__(self, sort=None, start_page = '0', max_pages=-1, name=None, **kwargs) -> None:
         """
 
@@ -28,7 +33,7 @@ class ZrzutSearchSpider(scrapy.Spider):
         # args:
         if sort is not None:
             if sort not in SORT_OPTIONS:
-                raise KeyError(f"argument `sort` must be one of {SORT_OPTIONS}")
+                raise UsageError(f"argument `sort` must be one of {SORT_OPTIONS}")
             self.qs.append(f"sort={sort}")
         if max_pages != -1:
             self.max_pages = int(max_pages)
@@ -70,8 +75,6 @@ class ZrzutSearchSpider(scrapy.Spider):
             # TODO: parse cel
            
             z['img_url'] = div.css('img::attr(src)').get()
-            if z['img_url'] is None: z['img_url'] = "NA"
-            
             yield z
         
         if self.max_pages < 0:
