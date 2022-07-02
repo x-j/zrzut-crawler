@@ -20,7 +20,7 @@ NUMBERS_PATTERN = re.compile(r"\d+")
 PLACEHOLDR_IMG_PATTERN = re.compile(r"zrzutka.pl/assets/imgs/cover")
 
 logger = logging.getLogger(__name__)
-u_to_pln = lambda z: int(NUMBERS_PATTERN.search(z).group())
+a_to_i = lambda z: int(NUMBERS_PATTERN.search(z).group())
 
 class ZrzutPipeline:
 
@@ -28,11 +28,11 @@ class ZrzutPipeline:
         adapter = ItemAdapter(item)
 
         if adapter.get('zebrano'):
-            adapter['zebrano'] = u_to_pln(adapter['zebrano'])
+            adapter['zebrano'] = a_to_i(adapter['zebrano'])
         else:
             raise DropItem(f"Missing 'zebrano' in {item}")
         if adapter.get('cel'):
-            adapter['cel'] = u_to_pln(adapter['cel'])
+            adapter['cel'] = a_to_i(adapter['cel'])
         
         return item
 
@@ -51,16 +51,12 @@ class DuplicatesPipeline:
 
 class ZrzutImagesPipeline(ImagesPipeline):
     
-    def get_images(self, response, request: Request, info, *, item=None):
-        adapter = ItemAdapter(item)
-        logger.info(f"item:{item}")
-        if PLACEHOLDR_IMG_PATTERN.search(adapter['img_url'][0]):
-            raise ImageException("skipping zrzutka's placeholder image!")
-        else:
-            return super().get_images(response, request, info, item=item)
-
     def get_media_requests(self, item, info):
-        yield Request(ItemAdapter(item)['img_url'])
+        adapter = ItemAdapter(item)
+        if PLACEHOLDR_IMG_PATTERN.search(adapter['img_url']):
+            logger.info(f"Z@{adapter['id']}: skipping zrzutka's placeholder image!")
+        else:
+            yield Request(adapter['img_url'])
 
     def file_path(self, request, response=None, info=None, *, item=None):
         return ItemAdapter(item)['id'] + os.path.splitext(request.url)[-1]

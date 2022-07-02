@@ -1,4 +1,4 @@
-import scrapy
+from scrapy import Spider, Request
 from scrapy.exceptions import UsageError
 
 from zrzut.utils import SORT_OPTIONS, NUMBERS_PATTERN
@@ -6,7 +6,7 @@ from zrzut.items import Zrzuta
 
 PAGE_SUFFIX = "&page={}"
 
-class ZrzutSearchSpider(scrapy.Spider):
+class ZrzutSearchSpider(Spider):
     name = 'zrzut_search'
     allowed_domains = ['zrzutka.pl']
     # INTERESTING: zrzutka changed this url on 29th June
@@ -43,12 +43,12 @@ class ZrzutSearchSpider(scrapy.Spider):
     def start_requests(self):
         if self.max_pages < 0:
             url = self.base_url + PAGE_SUFFIX.format(self.start_page)
-            yield scrapy.Request(url, self.parse)
+            yield Request(url, self.parse)
         else: 
             lim = self.max_pages + self.start_page
             for i in range(self.start_page, lim):
                 url = self.base_url + PAGE_SUFFIX.format(i)
-                yield scrapy.Request(url, self.parse) 
+                yield Request(url, self.parse) 
 
     def parse(self, response):
         for div in response.xpath('/html/body/div[@class="col-sm-6 col-xl-4 pb-4"]'):
