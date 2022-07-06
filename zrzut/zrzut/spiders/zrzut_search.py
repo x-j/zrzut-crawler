@@ -1,23 +1,14 @@
 from scrapy import Spider, Request
 from scrapy.exceptions import UsageError
 
-from zrzut.utils import SORT_OPTIONS, NUMBERS_PATTERN
+from zrzut.utils import SORT_OPTIONS, NUMBERS_PATTERN, ZRZUTKA_CATALOG_URL, PAGE_SUFFIX
 from zrzut.items import Zrzuta
-
-PAGE_SUFFIX = "&page={}"
 
 class ZrzutSearchSpider(Spider):
     name = 'zrzut_search'
     allowed_domains = ['zrzutka.pl']
-    # INTERESTING: zrzutka changed this url on 29th June
-    # base_url = 'https://zrzutka.pl/katalog/list?types[0]=all'
-    base_url = 'https://zrzutka.pl/catalog/list?types[0]=all'
     
-    custom_settings = {
-        'IMAGES_URLS_FIELD' : 'img_url'
-    }
-
-    def __init__(self, sort=None, start_page = '0', max_pages=-1, name=None, **kwargs) -> None:
+    def __init__(self, sort=None, start_page='0', max_pages=-1, name=None, **kwargs) -> None:
         """
 
         Args:
@@ -38,7 +29,7 @@ class ZrzutSearchSpider(Spider):
         if max_pages != -1:
             self.max_pages = int(max_pages)
         self.start_page = int(start_page)
-        self.base_url = self.base_url + '&'.join(self.qs) 
+        self.base_url = ZRZUTKA_CATALOG_URL + '&'.join(self.qs) 
 
     def start_requests(self):
         if self.max_pages < 0:
