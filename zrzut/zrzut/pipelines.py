@@ -15,22 +15,21 @@ from scrapy.exceptions import DropItem
 from scrapy.pipelines.images import ImagesPipeline, ImageException
 from itemadapter import ItemAdapter
 
-# from zrzut.utils import NUMBERS_PATTERN
-NUMBERS_PATTERN = re.compile(r"\d+")
+from zrzut.utils import NUMBERS_PATTERN
 PLACEHOLDR_IMG_PATTERN = re.compile(r"zrzutka.pl/assets/imgs/cover")
 
 logger = logging.getLogger(__name__)
-a_to_i = lambda z: int(NUMBERS_PATTERN.search(z).group())
+a_to_i = lambda z: int(z.replace('zł','').strip().replace(' ',''))
 
 class ZrzutPipeline:
 
     def process_item(self, item, spider):
         adapter = ItemAdapter(item)
 
-        if adapter.get('zebrano'):
+        try:
             adapter['zebrano'] = a_to_i(adapter['zebrano'])
-        else:
-            raise DropItem(f"Missing 'zebrano' in {item}")
+        except:
+            raise DropItem(f"Invalid or missing 'zebrano' in {item}")
         if adapter.get('cel'):
             adapter['cel'] = a_to_i(adapter['cel'])
         

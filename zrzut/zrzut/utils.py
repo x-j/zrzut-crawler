@@ -1,7 +1,7 @@
 import re
 
 # regexii
-NUMBERS_PATTERN = re.compile(r"\d+")
+NUMBERS_PATTERN = re.compile(r"(\d+ ?)+")
 
 # query parameters
 SORT_OPTIONS = {
