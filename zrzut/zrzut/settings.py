@@ -66,8 +66,6 @@ DOWNLOAD_DELAY = 1
 # See https://docs.scrapy.org/en/latest/topics/item-pipeline.html
 ITEM_PIPELINES = {
    'zrzut.pipelines.DuplicatesPipeline': 1,
-   'zrzut.pipelines.ZrzutImagesPipeline': 200,
-   # 'scrapy.pipelines.images.ImagesPipeline': 250,
    'zrzut.pipelines.ZrzutPipeline': 300
 }
 
