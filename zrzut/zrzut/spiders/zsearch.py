@@ -5,7 +5,7 @@ from zrzut.utils import SORT_OPTIONS, NUMBERS_PATTERN, ZRZUTKA_CATALOG_URL, PAGE
 from zrzut.items import Zrzuta
 
 class ZrzutSearchSpider(Spider):
-    name = 'zrzut_search'
+    name = 'zsearch'
     allowed_domains = ['zrzutka.pl']
     
     def __init__(self, sort=None, start_page='0', max_pages=-1, name=None, **kwargs) -> None:
